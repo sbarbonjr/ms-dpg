@@ -1,10 +1,13 @@
-.PHONY: test check table-real atlas contracted
+.PHONY: test check check-protocols table-real fig-spf-emotions atlas contracted
+
+PYTHON := python3
+RESULTS := results
+GENERATED := generated
 
 test:
-	PYTHONPATH=../src python3 -m pytest ../tests -q
+	PYTHONPATH=../src $(PYTHON) -m pytest ../tests --cov=msdpg -q
 
-# Stored artifacts are checked before computational reruns are added.
-check: test
+check-protocols:
 	@for f in protocols/*/PROTOCOL.sha256; do \
 		d=$$(dirname $$f); expected=$$(awk '{print $$1}' $$f); \
 		actual=$$(sha256sum $$d/PROTOCOL.md | awk '{print $$1}'); \
@@ -12,11 +15,16 @@ check: test
 		echo "$$d/PROTOCOL.md: OK"; \
 	done
 
+check: test check-protocols
+
 table-real:
-	@echo "Stored result: results/t4_real.csv"
+	$(PYTHON) scripts/make_table_real.py --input $(RESULTS)/t4_real.csv --output $(GENERATED)/table_real.tex
+
+fig-spf-emotions:
+	$(PYTHON) scripts/make_atlas.py --input $(RESULTS)/atlas/atlas.json --dataset emotions --output $(GENERATED)/spf_emotions.png
 
 atlas:
-	@echo "Stored result: results/atlas/atlas.json"
+	$(PYTHON) scripts/make_atlas.py --input $(RESULTS)/atlas/atlas.json --output $(GENERATED)/atlas.png
 
 contracted:
-	@echo "Stored result: results/contracted_view/summary.json"
+	@echo "Frozen contracted-view summary: $(RESULTS)/contracted_view/summary.json"
