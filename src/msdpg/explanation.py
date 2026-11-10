@@ -7,9 +7,10 @@ import pandas as pd
 from .measures import active_predicates, classify_lifts
 
 
-def _predicate_text(key, feature_names: list[str]) -> str:
+def _predicate_text(key, feature_names: list[str], thresholds: dict) -> str:
     feature, value, direction = key
-    return f"{feature_names[feature]} {direction} {value}"
+    threshold = thresholds.get(key, value)
+    return f"{feature_names[feature]} {direction} {threshold:.3g}"
 
 
 @dataclass
@@ -59,7 +60,11 @@ class Explanation:
         rows = [
             {
                 "predicate": key,
-                "text": _predicate_text(key, self.explainer.feature_names_),
+                "text": _predicate_text(
+                    key,
+                    self.explainer.feature_names_,
+                    self.explainer.predicate_thresholds_,
+                ),
                 "gain": gains[key],
             }
             for key in active
@@ -123,7 +128,9 @@ class PairExplanation:
                 {
                     "predicate": key,
                     "text": _predicate_text(
-                        key, self.explanation.explainer.feature_names_
+                        key,
+                        self.explanation.explainer.feature_names_,
+                        self.explanation.explainer.predicate_thresholds_,
                     ),
                     "lift_A": a,
                     "lift_B": b,

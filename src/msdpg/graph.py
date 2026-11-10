@@ -35,6 +35,8 @@ class _Graph:
     traces: list[Trace] = field(default_factory=list)
     gains: list[dict[Predicate, float]] = field(default_factory=list)
     is_br: bool = False
+    threshold_sum: defaultdict = field(default_factory=lambda: defaultdict(float))
+    threshold_count: defaultdict = field(default_factory=lambda: defaultdict(int))
 
     def _bump_edge(self, source: Any, target: Any, weight: float) -> None:
         if self.graph.has_edge(source, target):
@@ -85,19 +87,24 @@ class _Graph:
                 return
             right = int(tree.children_right[node])
             feature, threshold = int(tree.feature[node]), float(tree.threshold[node])
-            walk(
-                left,
-                path + (predicate_key(feature, threshold, "<=", self.matching, edges),),
-            )
-            walk(
-                right,
-                path + (predicate_key(feature, threshold, ">", self.matching, edges),),
-            )
+            left_key = predicate_key(feature, threshold, "<=", self.matching, edges)
+            right_key = predicate_key(feature, threshold, ">", self.matching, edges)
+            # Matching can merge distinct raw thresholds into one key. Retain
+            # their mean for readable predicate text without changing keys.
+            for key in (left_key, right_key):
+                self.threshold_sum[key] += threshold
+                self.threshold_count[key] += 1
+            walk(left, path + (left_key,))
+            walk(right, path + (right_key,))
 
         walk(0, ())
 
     def finish(self) -> None:
         self.gains = [dict(gain) for gain in self.gains]
+        self.thresholds = {
+            key: self.threshold_sum[key] / self.threshold_count[key]
+            for key in self.threshold_sum
+        }
         for label in range(self.n_labels):
             self.graph.add_node(sink(label), kind="sink")
         for node in self.graph.nodes:
@@ -281,6 +288,7 @@ class MSDPG:
         # Expose the extracted representation for structural analyses while
         # keeping construction internals private.
         self.graph, self.traces, self.gains = graph.graph, graph.traces, graph.gains
+        self.predicate_thresholds_ = graph.thresholds
         self.label_names_ = (
             list(label_names)
             if label_names is not None
