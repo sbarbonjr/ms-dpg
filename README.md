@@ -18,10 +18,6 @@
 [Paper](#reproducing-the-paper) ·
 [Citation](#citation)
 
-<img src="docs/figures/emotions_contracted.png" width="78%" alt="Contracted ms-DPG for the pair sad.lonely → quiet.still on the emotions benchmark">
-
-<sub><i>Contracted ms-DPG of a random forest on <b>emotions</b>: the shared conditions behind <code>sad.lonely → quiet.still</code>,<br>the order in which the trees test them, and the label sinks that receive their decision mass.</i></sub>
-
 </div>
 
 ---
