@@ -34,7 +34,8 @@ class Explanation:
         active = active_predicates(gains, self.explainer.top_percent, self.explainer.minimum_fraction)
         rows = [{"predicate": key, "text": _predicate_text(key, self.explainer.feature_names_), "gain": gains[key]}
                 for key in active]
-        return pd.DataFrame(rows).sort_values("gain", ascending=False).reset_index(drop=True)
+        columns = ["predicate", "text", "gain"]
+        return pd.DataFrame(rows, columns=columns).sort_values("gain", ascending=False).reset_index(drop=True)
     def pair(self, source: int | str, target: int | str) -> "PairExplanation":
         return PairExplanation(self, self._label(source), self._label(target))
     def plot_spf(self, ax=None):

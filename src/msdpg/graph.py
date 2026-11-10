@@ -195,6 +195,9 @@ class MSDPG:
             raise ValueError("forest must be RandomForestClassifier or MultiOutputClassifier of random forests")
         graph.finish()
         self._graph, self.forest_, self.is_br_ = graph, forest, is_br
+        # Expose the extracted representation for structural analyses while
+        # keeping construction internals private.
+        self.graph, self.traces, self.gains = graph.graph, graph.traces, graph.gains
         self.label_names_ = list(label_names) if label_names is not None else [str(i) for i in range(graph.n_labels)]
         if len(self.label_names_) != graph.n_labels:
             raise ValueError("label_names length must equal the number of labels")
@@ -203,9 +206,32 @@ class MSDPG:
             raise ValueError("feature_names length must equal X.shape[1]")
         return self
 
+    def _require_fit(self) -> None:
+        if not hasattr(self, "_graph"):
+            raise ValueError("call fit before querying an ms-DPG")
+
+    def spf_matrix(self) -> np.ndarray:
+        """Return SPF(A→B) for all ordered label pairs; the diagonal is NaN."""
+        self._require_fit()
+        return self._graph.spf_matrix(self.top_percent, self.minimum_fraction)
+
+    def node_flow(self) -> tuple[dict, dict]:
+        """Return predicate trace mass ``W(v)`` and per-label decision flow ``F_l(v)``."""
+        self._require_fit()
+        return self._graph.node_flow()
+
+    def lift(self) -> dict[Predicate, np.ndarray]:
+        """Return native-forest predicate lifts ``(F_l(v)/W(v))/pi_l``."""
+        self._require_fit()
+        return self._graph.lifts()
+
+    def extraction(self) -> tuple[list[dict], np.ndarray, list[dict]]:
+        """Return legacy path records, label sink masses, and predicate masses."""
+        self._require_fit()
+        return self._graph.records()
+
     def explain(self):
         """Return the global SPF and pair-level explanation interface."""
-        if not hasattr(self, "_graph"):
-            raise ValueError("call fit before explain")
+        self._require_fit()
         from .explanation import Explanation
         return Explanation(self)
