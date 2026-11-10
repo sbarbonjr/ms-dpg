@@ -1,6 +1,17 @@
 cff-version: 1.2.0
-title: "ms-DPG"
+title: "ms-DPG: Multi-sink Decision Predicate Graphs"
 message: "If you use this software, please cite the accompanying paper."
 type: software
 version: 0.1.0
 year: 2026
+authors:
+  - family-names: Barbon Junior
+    given-names: Sylvio
+  - family-names: Oliveira
+    given-names: Hiago F. F.
+  - family-names: Gonçalves
+    given-names: Rafael Figueira
+  - family-names: Lopes
+    given-names: Jessica Fernandes
+  - family-names: Cerri
+    given-names: Ricardo

@@ -85,20 +85,25 @@ class ContractedView:
             raise ImportError("install msdpg[graphviz] and system graphviz to render contracted views") from exc
         path = Path(path)
         dot = graphviz.Digraph("contracted", format="pdf")
-        dot.attr(rankdir="LR", splines="ortho", nodesep="0.25", ranksep="0.35")
+        dot.attr(rankdir="LR", splines="polyline", nodesep="0.22", ranksep="0.45")
         dot.attr("node", shape="box", style="rounded", fontname="Helvetica", fontsize="10")
         source, target = self.pair.source, self.pair.target
+        # A single bridge represents the retained executed predicate mass.  It
+        # avoids drawing two crossing sink edges from every predicate while the
+        # predicate labels themselves retain pair-specific lift information.
+        dot.node("paths", "retained executed\\nshared-predicate paths", shape="diamond", fontsize="9")
         dot.node("source", f"source sink\\n{source}", shape="ellipse")
         dot.node("target", f"target sink\\n{target}", shape="ellipse")
         maximum = max(self.predicates.mass, default=1.0)
         for index, row in self.predicates.iterrows():
             name = f"p{index}"
-            dot.node(name, row.text)
-            width = str(.6 + 2.4 * row.mass / maximum)
-            dot.edge(name, "source", penwidth=width)
-            dot.edge(name, "target", penwidth=width)
+            label = f"{row.text}\\nlift=({row.lift_A:.2f}, {row.lift_B:.2f})"
+            dot.node(name, label)
+            dot.edge(name, "paths", penwidth=str(.6 + 2.4 * row.mass / maximum))
+        dot.edge("paths", "source", label=f"coverage {self.coverage['source']:.1%}")
+        dot.edge("paths", "target", label=f"coverage {self.coverage['target']:.1%}")
         dot.save(str(path.with_suffix(".dot")))
-        rendered = dot.render(filename=str(path), cleanup=False)
+        rendered = dot.render(filename=str(path), cleanup=True)
         # Graphviz produces PDF; a matching PNG is useful in documentation.
-        dot.format = "png"; dot.render(filename=str(path), cleanup=False)
+        dot.format = "png"; dot.render(filename=str(path), cleanup=True)
         return Path(rendered)
