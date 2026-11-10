@@ -1,0 +1,15 @@
+name: msdpg-paper
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy=2.2.6
+  - scipy
+  - pandas
+  - scikit-learn=1.7.2
+  - matplotlib
+  - networkx
+  - pip
+  - pip:
+      - shap==0.49.1
+      - -e ..
