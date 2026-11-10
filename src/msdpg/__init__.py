@@ -1,4 +1,5 @@
 """Multi-sink Decision Predicate Graphs."""
+
 from .explanation import Explanation, PairExplanation
 from .graph import MSDPG
 
