@@ -30,3 +30,22 @@ def classify_lifts(source: float, target: float) -> str:
     if source < 1 and target < 1:
         return "co-depleting"
     return "separating"
+
+
+def containment(records: list[dict], predicate_mass: list[dict], sink_mass: np.ndarray,
+                child: int, parent: int, threshold: float = .01) -> float:
+    """Fraction of child decision mass traversing a parent-supported predicate."""
+    if sink_mass[parent] <= 0:
+        return 0.0
+    supported = {key for key, mass in predicate_mass[parent].items()
+                 if mass / sink_mass[parent] >= threshold}
+    child_records = [record for record in records if record["label"] == child]
+    total = sum(record["mass"] for record in child_records)
+    if not total:
+        return 0.0
+    return float(sum(record["mass"] for record in child_records
+                     if set(record["predicates"]) & supported) / total)
+
+def jaccard(left: set, right: set) -> float:
+    """Return unweighted Jaccard overlap, using 0 for two empty sets."""
+    return len(left & right) / len(left | right) if left or right else 0.0
