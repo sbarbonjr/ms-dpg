@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.multioutput import MultiOutputClassifier
+
 from msdpg import MSDPG
 from msdpg.compare import compare_architectures
 from msdpg.datasets import make_scenario
@@ -55,7 +56,7 @@ def test_input_validation_and_explanation_errors():
     with pytest.raises(ValueError):
         MSDPG().fit(single, X)
     reg = RandomForestRegressor(n_estimators=2, random_state=0).fit(X, Y)
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         MSDPG().fit(reg, X)
     exp = MSDPG().fit(native, X).explain()
     with pytest.raises(KeyError):

@@ -1,13 +1,14 @@
 """Shared Predicate Flow and related structural measures."""
 
 from __future__ import annotations
+
 import numpy as np
 
 
 def active_predicates(
     gains: dict, top_percent: float = 25, minimum_fraction: float = 0.05
 ) -> set:
-    """Return positive-gain predicates meeting the percentile and relative-gain cutoffs."""
+    """Return active positive-gain predicates."""
     positive = {key: value for key, value in gains.items() if value > 0}
     if not positive:
         return set()

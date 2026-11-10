@@ -1,6 +1,7 @@
 import pytest
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
+
 from msdpg import MSDPG
 from msdpg.datasets import make_scenario
 

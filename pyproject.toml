@@ -27,3 +27,7 @@ source = ["msdpg"]
 
 [tool.coverage.report]
 fail_under = 90
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "RUF", "TRY"]
+ignore = ["TRY003"]

@@ -1,11 +1,12 @@
 """Selection, coverage, and rendering of contracted pair views."""
 
 from __future__ import annotations
+
+import math
 from collections import defaultdict
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
-import math
 
 _CLASSES = {
     (1, 1): "both",

@@ -1,17 +1,21 @@
 """Fitting and extraction of multi-sink Decision Predicate Graphs."""
 
 from __future__ import annotations
+
 from collections import defaultdict
 from dataclasses import dataclass, field
+from itertools import pairwise
 from typing import Any
+
 import networkx as nx
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.tree import _tree
+
 from .gain import directional_gains, positive_index
-from .predicates import Predicate, predicate_key, quantile_edges
 from .measures import active_predicates
+from .predicates import Predicate, predicate_key, quantile_edges
 
 
 @dataclass(frozen=True)
@@ -77,7 +81,7 @@ class _Graph:
                     )
                 trace = Trace(tree_id, path, weight, probabilities)
                 self.traces.append(trace)
-                for a, b in zip(path, path[1:]):
+                for a, b in pairwise(path):
                     self._bump_edge(a, b, weight)
                 if path:
                     for label in label_columns:
@@ -94,8 +98,8 @@ class _Graph:
             for key in (left_key, right_key):
                 self.threshold_sum[key] += threshold
                 self.threshold_count[key] += 1
-            walk(left, path + (left_key,))
-            walk(right, path + (right_key,))
+            walk(left, (*path, left_key))
+            walk(right, (*path, right_key))
 
         walk(0, ())
 
@@ -223,7 +227,7 @@ class MSDPG:
         X: np.ndarray,
         label_names: list[str] | None = None,
         feature_names: list[str] | None = None,
-    ) -> "MSDPG":
+    ) -> MSDPG:
         """Extract traces, sinks, and gains from a fitted supported forest."""
         X = np.asarray(X)
         if X.ndim != 2:
@@ -257,7 +261,8 @@ class MSDPG:
                 isinstance(item, RandomForestClassifier) for item in estimators
             ):
                 raise ValueError(
-                    "BR requires a MultiOutputClassifier of RandomForestClassifier estimators"
+                    "BR requires a MultiOutputClassifier of "
+                    "RandomForestClassifier estimators"
                 )
             classes = [item.classes_ for item in estimators]
             if any(not set(np.asarray(item)).issubset({0, 1}) for item in classes):
@@ -280,8 +285,9 @@ class MSDPG:
                     )
             is_br = True
         else:
-            raise ValueError(
-                "forest must be RandomForestClassifier or MultiOutputClassifier of random forests"
+            raise TypeError(
+                "forest must be RandomForestClassifier or "
+                "MultiOutputClassifier of random forests"
             )
         graph.finish()
         self._graph, self.forest_, self.is_br_ = graph, forest, is_br
@@ -315,7 +321,7 @@ class MSDPG:
         return self._graph.spf_matrix(self.top_percent, self.minimum_fraction)
 
     def node_flow(self) -> tuple[dict, dict]:
-        """Return predicate trace mass ``W(v)`` and per-label decision flow ``F_l(v)``."""
+        """Return predicate trace mass and per-label decision flow."""
         self._require_fit()
         return self._graph.node_flow()
 

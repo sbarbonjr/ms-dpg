@@ -1,7 +1,9 @@
 """Directional predicate keys and matching rules."""
 
 from __future__ import annotations
+
 from typing import TypeAlias
+
 import numpy as np
 
 Predicate: TypeAlias = tuple[int, float | int, str]

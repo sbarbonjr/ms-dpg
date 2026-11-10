@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
+
 from msdpg import MSDPG
 from msdpg.datasets import make_scenario
 from msdpg.predicates import predicate_key, quantile_edges

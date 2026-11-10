@@ -1,9 +1,12 @@
 """Label-wise directional Gini gains."""
 
 from __future__ import annotations
+
 from collections import defaultdict
+
 import numpy as np
 from sklearn.tree import _tree
+
 from .predicates import Predicate, predicate_key
 
 

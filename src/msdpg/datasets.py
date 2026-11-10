@@ -1,6 +1,7 @@
 """Small deterministic diagnostic datasets."""
 
 from __future__ import annotations
+
 import numpy as np
 
 

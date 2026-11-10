@@ -2,8 +2,10 @@
 
 import json
 from pathlib import Path
+
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
+
 from msdpg import MSDPG
 from msdpg.datasets import make_scenario
 from msdpg.measures import spf
@@ -17,7 +19,7 @@ def test_reference_d1_parity_fixture():
     model = RandomForestClassifier(n_estimators=16, random_state=11).fit(X, Y)
     fitted = MSDPG().fit(model, X)
     assert len(fitted.traces) == expected["n_traces"]
-    records, sink_mass, _ = fitted.extraction()
+    _records, sink_mass, _ = fitted.extraction()
     assert np.allclose(sink_mass, expected["sink_mass"], rtol=0, atol=1e-12)
     assert np.allclose(
         fitted.spf_matrix(), expected["spf"], equal_nan=True, rtol=0, atol=1e-12

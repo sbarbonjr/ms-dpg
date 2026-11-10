@@ -1,22 +1,22 @@
 <div align="center">
 
-# 🌳 ms-DPG
+# ms-DPG
 
 ### Multi-sink Decision Predicate Graphs
 
 **See which decision conditions a multi-label random forest reuses across its labels,<br>and whether it uses them to predict labels together or to choose between them.**
 
 [![CI](https://github.com/sbarbonjr/ms-dpg/actions/workflows/ci.yml/badge.svg)](https://github.com/sbarbonjr/ms-dpg/actions)
-[![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](#-installation)
+[![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](#installation)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-%E2%89%A51.3-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f)](LICENSE)
 
-[Installation](#-installation) ·
-[Quick start](#-quick-start) ·
-[How it works](#-how-it-works) ·
-[Reading an explanation](#-reading-an-explanation) ·
-[Paper](#-reproducing-the-paper) ·
-[Citation](#-citation)
+[Installation](#installation) ·
+[Quick start](#quick-start) ·
+[How it works](#how-it-works) ·
+[Reading an explanation](#reading-an-explanation) ·
+[Paper](#reproducing-the-paper) ·
+[Citation](#citation)
 
 <img src="docs/figures/emotions_contracted.png" width="78%" alt="Contracted ms-DPG for the pair sad.lonely → quiet.still on the emotions benchmark">
 
@@ -26,7 +26,7 @@
 
 ---
 
-## ✨ Why ms-DPG?
+## Why ms-DPG?
 
 Feature attributions such as TreeSHAP or MDI explain **one label at a time**. A native
 multi-output forest, however, decides **all labels through the same splits**. Two labels
@@ -40,14 +40,14 @@ graph.
 
 | You want to know… | ms-DPG gives you |
 |---|---|
-| Which label pairs does the forest decide through common conditions? | 🟦 **SPF matrix**: Shared Predicate Flow for every ordered pair |
-| Which conditions are these, and in which order are they tested? | 🕸️ **Contracted view** of the pair |
-| Does a condition raise both labels, or one at the expense of the other? | 🟢🟣 **Lifts**: co-enriching vs separating |
-| Does fitting the labels jointly change this? | ⚖️ **Native vs Binary Relevance** comparison |
+| Which label pairs does the forest decide through common conditions? | **SPF matrix**: Shared Predicate Flow for every ordered pair |
+| Which conditions are these, and in which order are they tested? | **Contracted view** of the pair |
+| Does a condition raise both labels, or one at the expense of the other? | **Lifts**: co-enriching vs separating |
+| Does fitting the labels jointly change this? | **Native vs Binary Relevance** comparison |
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 pip install git+https://github.com/sbarbonjr/ms-dpg.git
@@ -57,7 +57,7 @@ Rendering contracted views needs [Graphviz](https://graphviz.org) (`apt install 
 
 ---
 
-## 🚀 Quick start
+## Quick start
 
 ```python
 from sklearn.ensemble import RandomForestClassifier
@@ -82,7 +82,7 @@ More in [`examples/`](examples/) and the step-by-step [tutorial](docs/tutorial.i
 
 ---
 
-## 🧭 How it works
+## How it works
 
 <table>
 <tr>
@@ -112,7 +112,7 @@ Definitions with equations are in [`docs/concepts.md`](docs/concepts.md).
 
 ---
 
-## 🔍 Reading an explanation
+## Reading an explanation
 
 An explanation has **two levels**. On the left, the SPF matrix shows where the forest
 reuses conditions across labels; the outlined pair has the highest SPF. On the right,
@@ -124,9 +124,9 @@ each shared predicate of that pair is placed by its two lifts.
 
 | Quadrant of the lift plot | Meaning |
 |---|---|
-| 🟢 both lifts > 1 | **co-enriching**: where the condition holds, the forest raises both labels |
-| 🟣 one > 1, one < 1 | **separating**: the forest uses the condition to choose one label over the other |
-| ⚪ both lifts < 1 | **co-depleting**: the condition lowers both labels |
+| both lifts > 1 | **co-enriching**: where the condition holds, the forest raises both labels |
+| one > 1, one < 1 | **separating**: the forest uses the condition to choose one label over the other |
+| both lifts < 1 | **co-depleting**: the condition lowers both labels |
 
 ### Same conditions, opposite purposes
 
@@ -146,7 +146,7 @@ of its shared mass on **separating** predicates: the absence of words such as
 
 ---
 
-## ⚖️ Native forests vs Binary Relevance
+## Native forests vs Binary Relevance
 
 ```python
 from msdpg.compare import compare_architectures
@@ -165,7 +165,7 @@ predictive parity.
 
 ---
 
-## 🧩 API at a glance
+## API at a glance
 
 | Object | Main members |
 |---|---|
@@ -181,7 +181,7 @@ contracted views are defined for native forests only).
 
 ---
 
-## 📄 Reproducing the paper
+## Reproducing the paper
 
 The [`paper/`](paper/) folder is separate from the library. It contains a pinned
 environment, the protocols of every analysis, and one `make` target per table and
@@ -195,7 +195,7 @@ make check
 
 ---
 
-## 🛠️ Development
+## Development
 
 ```bash
 pip install -e .[dev]
@@ -204,7 +204,7 @@ pytest -q                 # unit, property and parity tests
 
 ---
 
-## 📚 Citation
+## Citation
 
 If you use ms-DPG, please cite:
 
@@ -220,10 +220,10 @@ If you use ms-DPG, please cite:
 
 See also [`CITATION.cff`](CITATION.cff).
 
-## 🔗 Related
+## Related
 
 - [**DPG**](https://github.com/Meta-Group/DPG): Decision Predicate Graphs for single-output tree ensembles.
 
-## 📜 License
+## License
 
 [MIT](LICENSE) © 2026 the authors.

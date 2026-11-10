@@ -1,9 +1,12 @@
 """Public global and pair-level explanation objects."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
+
 from .measures import active_predicates, classify_lifts
 
 
@@ -76,7 +79,7 @@ class Explanation:
             .reset_index(drop=True)
         )
 
-    def pair(self, source: int | str, target: int | str) -> "PairExplanation":
+    def pair(self, source: int | str, target: int | str) -> PairExplanation:
         return PairExplanation(self, self._label(source), self._label(target))
 
     def plot_spf(self, ax=None):
@@ -107,7 +110,7 @@ class PairExplanation:
             self.separating_share = np.nan
             return
         lifts = graph.lifts()
-        records, _, predicate_mass = graph.records()
+        _records, _, predicate_mass = graph.records()
         shared = active_predicates(
             graph.gains[self.source_index],
             self.explanation.explainer.top_percent,

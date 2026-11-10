@@ -1,6 +1,7 @@
 """Matplotlib plots for ms-DPG explanations."""
 
 from __future__ import annotations
+
 import matplotlib.pyplot as plt
 
 
